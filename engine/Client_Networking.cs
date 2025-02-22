@@ -12,11 +12,13 @@ namespace Client_Assembly
 {
     public class Client_Networking
     {
+        static private uint connection;
         static private NetworkingSockets sockets = null;
         static private NetworkingMessage netMessage;
-
+        
         public Client_Networking()
         {
+            connection = 0;
             sockets = new NetworkingSockets();
             netMessage = new NetworkingMessage();
         }
@@ -44,9 +46,7 @@ namespace Client_Assembly
         static public void CreateNetworkingClient()
         {
             NetworkingSockets client = new NetworkingSockets();
-
-            uint connection = 0;
-
+            
             StatusCallback status = (ref StatusInfo info) =>
             {
                 switch (info.connectionInfo.state)
@@ -72,7 +72,7 @@ namespace Client_Assembly
 
             Address address = new Address();
 
-            address.SetAddress("::1", 0/* port */);//TODO
+            address.SetAddress(Client_Assembly.Client.GetLocalIPAddress(), 3074);//ToDo
 
             connection = client.Connect(ref address);
 
@@ -111,19 +111,36 @@ namespace Client_Assembly
 
                 Thread.Sleep(15);
             }
+            Client_Assembly.Client.Initialise_ThisClientWithServer();
         }
 
-        public static void CreateAndSendNewMessage(ushort praiseEventId)
+        public static void CreateAndSendNewMessage(byte praiseEventId)
         {
             byte[] data = new byte[64];
-
-            byte[] intBytes = null;
-            intBytes = BitConverter.GetBytes(praiseEventId);
-            for (ushort index = 0; index < intBytes.Length; index++)
+            byte intBytes = new byte();
+            string IP_Address_String = Client_Assembly.Client.GetLocalIPAddress();
+            switch(praiseEventId)
             {
-                data[index] = intBytes[index];
+            case 0:
+                intBytes = praiseEventId;
+                data[0] = intBytes;
+                data[1] = byte.Parse(IP_Address_String.Substring(0, 3));
+                data[2] = byte.Parse(IP_Address_String.Substring(4, 7));
+                data[3] = byte.Parse(IP_Address_String.Substring(8, 11));
+                data[4] = byte.Parse(IP_Address_String.Substring(13, 16));
+
+                intBytes = 0;
+                for (ushort index = 5; index < data.Length; index++)
+                {
+                    data[index] = intBytes;
+                }
+                break;
+            
+            case 1:
+                    
+                break;
             }
-            sockets.SendMessageToConnection(connection, data);
+            sockets.SendMessageToConnection(connection, data);//ToDo
         }
 
         public static void CopyPayloadFromMessage()
