@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Numerics;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Valve.Sockets;
@@ -116,25 +117,45 @@ namespace Client_Assembly
 
         public static void CreateAndSendNewMessage(byte praiseEventId)
         {
+            Console.WriteLine("entered => CreateAndSendNewMessage()");//ToDo
             byte[] data = new byte[64];
-            byte intBytes = new byte();
+            byte index_DataArray = 0;
+            byte intByte = new byte();
+
             string IP_Address_String = Client_Assembly.Client.GetLocalIPAddress();
-            switch(praiseEventId)
+            string[] IP_segments = new string[4];
+
+            Console.WriteLine("switch == " + praiseEventId);//ToDo
+            switch (praiseEventId)
             {
             case 0:
-                intBytes = praiseEventId;
-                data[0] = intBytes;
-                data[1] = byte.Parse(IP_Address_String.Substring(0, 3));
-                data[2] = byte.Parse(IP_Address_String.Substring(4, 7));
-                data[3] = byte.Parse(IP_Address_String.Substring(8, 11));
-                data[4] = byte.Parse(IP_Address_String.Substring(13, 16));
-
-                intBytes = 0;
-                for (ushort index = 5; index < data.Length; index++)
+                intByte = praiseEventId;
+                data[index_DataArray] = intByte;
+                index_DataArray++;
+                Console.WriteLine("IP_Address => " + IP_Address_String);//ToDo
+                if (IP_Address_String.Contains(".") == true)
                 {
-                    data[index] = intBytes;
+                    IP_segments = IP_Address_String.Split('.');
+                    for(byte index_IP_segments = 0; index_IP_segments < IP_segments.Length; index_IP_segments++)
+                    {
+                        data[index_DataArray] = byte.Parse(IP_segments[index_IP_segments].Substring(0, IP_segments[index_IP_segments].Length));
+                        index_DataArray++;
+                    }
+                    for(byte index_Data = index_DataArray; index_Data < 64; index_Data++)
+                    {
+                        data[index_DataArray] = new byte();
+                    }
                 }
-                break;
+                else if (IP_Address_String.Contains(":") == true)
+                {
+                    //ToDo
+                    //IP_segments = IP_Address_String.Split(':');
+                }
+                for (byte index = 1; index < 5; index++)//ToDo
+                {//ToDo
+                    Console.WriteLine("IP_Address segment " + (index-1) + " => " + data[index]);//ToDo
+                }//ToDo
+                    break;
             
             case 1:
                     

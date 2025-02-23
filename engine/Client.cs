@@ -21,21 +21,13 @@ namespace Client_Assembly
 
         static public void Create_Client_Networking()
         {
-            Valve.Sockets.Library.Initialize();
+            //Valve.Sockets.Library.Initialize();
             //Client_Assembly.Client_Networking.CreateNetworkingClient();
             //thread_RecieveResult = new Thread(Client_Assembly.Client.Thread_RecieveResult);
             //thread_RecieveResult.Start();
-            //Console.WriteLine("Press ENTER to generate input event.");
-            //Console.ReadLine();
-            //Client_Assembly.Client.Generate_InputAction(69);
+            Client_Assembly.Client.Initialise_ThisClientWithServer();
         }
 
-/*       static public void Generate_InputAction(int value)
-        {
-            Set_in_praiseEventId(value);
-            Client_Assembly.Client_Networking.CreateAndSendNewMessage();
-        }
-*/
         static public void Initialise_ThisClientWithServer()
         {
             string ip_Address = GetLocalIPAddress();

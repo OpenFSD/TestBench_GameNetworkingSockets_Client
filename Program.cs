@@ -1,4 +1,5 @@
-﻿namespace Client_Assembly
+﻿
+namespace Client_Assembly
 {
     public class Program
     {
